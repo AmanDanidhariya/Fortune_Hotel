@@ -48,9 +48,9 @@ function CabinRow({ cabin }) {
     id: cabinId,
     name,
     maxCapacity,
-    regulerPrice,
+    regularPrice,
     discount,
-    image,
+    image, 
   } = cabin;
 
   const queryClient = useQueryClient();
@@ -58,14 +58,14 @@ function CabinRow({ cabin }) {
   const { isLoading: isDeleting, mutate } = useMutation({
     mutationFn: deleteCabins,
     onSuccess: () => {
-      toast.success("Cabin successfully deleted")
+      toast.success("Cabin successfully deleted");
       queryClient.invalidateQueries({
         queryKey: ["cabins"],
       });
     },
-    onError:(err)=>{
-      toast.error(err.message)
-    }
+    onError: (err) => {
+      toast.error(err.message);
+    },
   });
 
   return (
@@ -73,7 +73,7 @@ function CabinRow({ cabin }) {
       <Img src={image} />
       <Cabin>{name}</Cabin>
       <div>Fits up to {maxCapacity} guests</div>
-      <Price>{formatCurrency(regulerPrice)}</Price>
+      <Price>{formatCurrency(regularPrice)}</Price>
       <Discount>{formatCurrency(discount)}</Discount>
       <button onClick={() => mutate(cabinId)} disabled={isDeleting}>
         Delete
