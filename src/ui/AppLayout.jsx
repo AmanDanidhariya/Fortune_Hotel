@@ -18,13 +18,15 @@ const Main = styled.main`
 
 const AppLayout = () => {
   return (
-    <StyledAppLayout>
-      <Header />
-      <Sidebar />
-      <Main>
-        <Outlet />
-      </Main>
-    </StyledAppLayout>
+    <>
+      <StyledAppLayout>
+        <Header />
+        <Sidebar />
+        <Main>
+          <Outlet />
+        </Main>
+      </StyledAppLayout>
+    </>
   );
 };
 
