@@ -9,6 +9,7 @@ export async function getCabins() {
   }
   return data;
 }
+
 export async function createEditCabin(newCabin, id) {
   console.log(newCabin, id);
   const hasImagePath = newCabin.image?.startsWith?.(supabaseUrl);
@@ -51,6 +52,7 @@ export async function createEditCabin(newCabin, id) {
   }
   return data;
 }
+
 
 export async function deleteCabins(id) {
   const { data, error } = await supabase.from("cabins").delete().eq("id", id);

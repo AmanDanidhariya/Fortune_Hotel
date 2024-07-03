@@ -10,8 +10,15 @@ import FormRow from "../../ui/FormRow";
 
 import { createEditCabin } from "../../services/apicabins";
 import { useForm } from "react-hook-form";
+import { useCreateCabin } from "./useCreateCabin";
+import { useEditCabin } from "./useEditCabin";
 
 function CreateCabinForm({ cabinToEdit = {} }) {
+  const { createCabin, isCreated } = useCreateCabin();
+  const { editCabin, isEditing } = useEditCabin();
+
+  const isWorking = isCreated || isEditing;
+
   const { id: editId, ...editValues } = cabinToEdit;
   const isEditSession = Boolean(editId);
 
@@ -21,42 +28,28 @@ function CreateCabinForm({ cabinToEdit = {} }) {
 
   const { errors } = formState;
 
-  const queryClient = new QueryClient();
-  const { mutate: createCabin, isLoading: isCreated } = useMutation({
-    mutationFn: createEditCabin,
-    onSuccess: () => {
-      toast.success("New cabin successfully created");
-      queryClient.invalidateQueries({
-        queryKey: ["cabins"],
-      });
-      reset();
-    },
-    onError: (err) => {
-      toast.error(err.message);
-    },
-  });
-
-  const { mutate: editCabin, isLoading: isEditing } = useMutation({
-    mutationFn: ({ newCabinData, id }) => createEditCabin(newCabinData, id),
-    onSuccess: () => {
-      toast.success("cabin successfully edited");
-      queryClient.invalidateQueries({
-        queryKey: ["cabins"],
-      });
-      reset();
-    },
-    onError: (err) => {
-      toast.error(err.message);
-    },
-  });
-
-  const isWorking = isCreated || isEditing;
-
   function onSubmit(data) {
     const image = typeof data.image === "string" ? data.image : data.image[0];
     if (isEditSession)
-      editCabin({ newCabinData: { ...data, image }, id: editId });
-    else createCabin({ ...data, image: data.image[0] });
+      editCabin(
+        { newCabinData: { ...data, image }, id: editId },
+        {
+          onSuccess: (data) => {
+            console.log(data);
+            reset();
+          },
+        }
+      );
+    else
+      createCabin(
+        { ...data, image: data.image[0] },
+        {
+          onSuccess: (data) => {
+            console.log(data);
+            reset();
+          },
+        }
+      );
 
     console.log(data);
   }
@@ -128,7 +121,6 @@ function CreateCabinForm({ cabinToEdit = {} }) {
         <Textarea
           type="number"
           id="description"
-          disabled={isWorking}
           defaultValue=""
           {...register("description", {
             required: "This field is required.",
